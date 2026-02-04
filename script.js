@@ -1,6 +1,30 @@
+// Theme toggle with preference persistence
+const themeToggle = document.querySelector(".theme-toggle");
+const rootElement = document.documentElement;
+
+const applyTheme = (theme) => {
+  rootElement.setAttribute("data-theme", theme);
+  const isLight = theme === "light";
+  themeToggle.setAttribute("aria-pressed", isLight);
+  themeToggle.setAttribute("aria-label", `Switch to ${isLight ? "dark" : "light"} mode`);
+  themeToggle.querySelector(".theme-toggle-icon").textContent = isLight ? "☀️" : "🌙";
+  themeToggle.querySelector(".theme-toggle-text").textContent = isLight ? "Light" : "Dark";
+};
+
+const storedTheme = localStorage.getItem("theme");
+const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+applyTheme(storedTheme || (prefersLight ? "light" : "dark"));
+
+themeToggle.addEventListener("click", () => {
+  const nextTheme = rootElement.getAttribute("data-theme") === "light" ? "dark" : "light";
+  localStorage.setItem("theme", nextTheme);
+  applyTheme(nextTheme);
+});
+
 // Mobile navigation toggle
 const menuToggle = document.querySelector(".menu-toggle");
 const navLinks = document.querySelector(".nav-links");
+const siteHeader = document.querySelector(".site-header");
 
 menuToggle.addEventListener("click", () => {
   const isOpen = navLinks.classList.toggle("open");
@@ -15,6 +39,11 @@ navLinks.addEventListener("click", (event) => {
     menuToggle.classList.remove("active");
     menuToggle.setAttribute("aria-expanded", false);
   }
+});
+
+// Header scroll effect
+window.addEventListener("scroll", () => {
+  siteHeader.classList.toggle("scrolled", window.scrollY > 10);
 });
 
 // Services accordion interaction for added focus on details
@@ -42,6 +71,24 @@ filterButtons.forEach((button) => {
       card.style.display = matches ? "block" : "none";
     });
   });
+});
+
+// Reveal animations on scroll
+const revealElements = document.querySelectorAll("[data-reveal]");
+const revealObserver = new IntersectionObserver(
+  (entries, observer) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("reveal-visible");
+        observer.unobserve(entry.target);
+      }
+    });
+  },
+  { threshold: 0.2 }
+);
+
+revealElements.forEach((element) => {
+  revealObserver.observe(element);
 });
 
 // Contact form validation and smooth feedback message

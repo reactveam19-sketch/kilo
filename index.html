@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -27,6 +27,10 @@
         <li><a href="#contact">Contact</a></li>
       </ul>
       <div class="nav-cta">
+        <button class="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to light mode">
+          <span class="theme-toggle-icon" aria-hidden="true">🌙</span>
+          <span class="theme-toggle-text">Dark</span>
+        </button>
         <a class="button ghost" href="#contact">Let’s Talk</a>
       </div>
     </nav>
@@ -61,6 +65,7 @@
       </div>
       <div class="hero-visual" aria-hidden="true">
         <!-- Decorative shapes for dynamic hero background -->
+        <img class="hero-image" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=900&q=80" alt="" loading="lazy" />
         <div class="orb orb-one"></div>
         <div class="orb orb-two"></div>
         <div class="orb orb-three"></div>
@@ -81,21 +86,21 @@
         </p>
       </div>
       <div class="about-grid">
-        <div class="about-card">
+        <div class="about-card" data-reveal>
           <h3>Our Mission</h3>
           <p>
             Empower companies to connect with audiences through human-centered design, high-impact
             storytelling, and scalable technology.
           </p>
         </div>
-        <div class="about-card">
+        <div class="about-card" data-reveal>
           <h3>How We Work</h3>
           <p>
             We sprint, test, and iterate quickly while keeping you in the loop with transparent
             communication and measurable outcomes.
           </p>
         </div>
-        <div class="about-card">
+        <div class="about-card" data-reveal>
           <h3>Values</h3>
           <p>
             Curiosity, clarity, and craft are at the heart of every experience we build.
@@ -103,22 +108,22 @@
         </div>
       </div>
       <div class="team">
-        <article class="team-member">
-          <img src="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=400&q=80" alt="Portrait of Mia Verma, Creative Director" loading="lazy" />
+        <article class="team-member" data-reveal>
+          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80" alt="Portrait of Mia Verma, Creative Director" loading="lazy" />
           <div>
             <h4>Mia Verma</h4>
             <p>Creative Director</p>
           </div>
         </article>
-        <article class="team-member">
-          <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&q=80" alt="Portrait of Liam Brooks, Strategy Lead" loading="lazy" />
+        <article class="team-member" data-reveal>
+          <img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=400&q=80" alt="Portrait of Liam Brooks, Strategy Lead" loading="lazy" />
           <div>
             <h4>Liam Brooks</h4>
             <p>Strategy Lead</p>
           </div>
         </article>
-        <article class="team-member">
-          <img src="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=400&q=80" alt="Portrait of Ava Chen, Product Architect" loading="lazy" />
+        <article class="team-member" data-reveal>
+          <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=400&q=80" alt="Portrait of Ava Chen, Product Architect" loading="lazy" />
           <div>
             <h4>Ava Chen</h4>
             <p>Product Architect</p>
@@ -133,7 +138,7 @@
         <h2>End-to-end solutions for modern brands.</h2>
       </div>
       <div class="services-grid">
-        <article class="service-card" tabindex="0">
+        <article class="service-card" tabindex="0" data-reveal>
           <h3>Brand Experience</h3>
           <p>Create a cohesive identity and narrative that resonates.</p>
           <ul>
@@ -148,7 +153,7 @@
             </p>
           </div>
         </article>
-        <article class="service-card" tabindex="0">
+        <article class="service-card" tabindex="0" data-reveal>
           <h3>Digital Products</h3>
           <p>Design and build products that delight and scale.</p>
           <ul>
@@ -163,7 +168,7 @@
             </p>
           </div>
         </article>
-        <article class="service-card" tabindex="0">
+        <article class="service-card" tabindex="0" data-reveal>
           <h3>Growth Marketing</h3>
           <p>Data-driven campaigns that drive measurable growth.</p>
           <ul>
@@ -193,43 +198,43 @@
         <button class="filter-button" data-filter="marketing" role="tab">Marketing</button>
       </div>
       <div class="portfolio-grid">
-        <article class="portfolio-card" data-category="branding">
-          <img src="https://images.unsplash.com/photo-1487014679447-9f8336841d58?auto=format&fit=crop&w=600&q=80" alt="Branding concept for Nova" loading="lazy" />
+        <article class="portfolio-card" data-category="branding" data-reveal>
+          <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80" alt="Branding concept for Nova" loading="lazy" />
           <div class="portfolio-info">
             <h3>Nova Rebrand</h3>
             <p>Identity system &amp; launch kit</p>
           </div>
         </article>
-        <article class="portfolio-card" data-category="product">
-          <img src="https://images.unsplash.com/photo-1523475472560-d2df97ec485c?auto=format&fit=crop&w=600&q=80" alt="Product dashboard for Solstice" loading="lazy" />
+        <article class="portfolio-card" data-category="product" data-reveal>
+          <img src="https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=800&q=80" alt="Product dashboard for Solstice" loading="lazy" />
           <div class="portfolio-info">
             <h3>Solstice Platform</h3>
             <p>Product design &amp; engineering</p>
           </div>
         </article>
-        <article class="portfolio-card" data-category="marketing">
-          <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&q=80" alt="Marketing campaign visuals" loading="lazy" />
+        <article class="portfolio-card" data-category="marketing" data-reveal>
+          <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80" alt="Marketing campaign visuals" loading="lazy" />
           <div class="portfolio-info">
             <h3>Pulse Campaign</h3>
             <p>Growth marketing &amp; paid media</p>
           </div>
         </article>
-        <article class="portfolio-card" data-category="product">
-          <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80" alt="Mobile app interface" loading="lazy" />
+        <article class="portfolio-card" data-category="product" data-reveal>
+          <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=800&q=80" alt="Mobile app interface" loading="lazy" />
           <div class="portfolio-info">
             <h3>Loop Mobile</h3>
             <p>App experience &amp; UX research</p>
           </div>
         </article>
-        <article class="portfolio-card" data-category="branding">
-          <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80" alt="Branding moodboard" loading="lazy" />
+        <article class="portfolio-card" data-category="branding" data-reveal>
+          <img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=800&q=80" alt="Branding moodboard" loading="lazy" />
           <div class="portfolio-info">
             <h3>Studio Atelier</h3>
             <p>Brand story &amp; digital presence</p>
           </div>
         </article>
-        <article class="portfolio-card" data-category="marketing">
-          <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=600&q=80" alt="Analytics dashboard" loading="lazy" />
+        <article class="portfolio-card" data-category="marketing" data-reveal>
+          <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80" alt="Analytics dashboard" loading="lazy" />
           <div class="portfolio-info">
             <h3>Momentum Analytics</h3>
             <p>Campaign optimization</p>
