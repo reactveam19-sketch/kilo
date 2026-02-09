@@ -1,12 +1,15 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/admin_auth.php';
+
 function render_header(array $settings, string $title = ''): void
 {
     $pageTitle = $title !== '' ? $title . ' | ' . $settings['site_name'] : $settings['site_name'];
     $tagline = htmlspecialchars($settings['site_tagline'], ENT_QUOTES, 'UTF-8');
     $siteName = htmlspecialchars($settings['site_name'], ENT_QUOTES, 'UTF-8');
     $headerAd = $settings['header_ad'] ?? '';
+    $isAdmin = is_admin_authenticated();
 
     echo <<<HTML
     <!DOCTYPE html>
@@ -25,7 +28,14 @@ function render_header(array $settings, string $title = ''): void
                 <p class="tagline">{$tagline}</p>
                 <nav class="nav">
                     <a href="/">Home</a>
-                    <a href="/admin/index.php">Admin</a>
+    HTML;
+
+    if ($isAdmin) {
+        echo '<a href="/admin/index.php">Admin</a>';
+        echo '<a href="/admin/logout.php">Logout</a>';
+    }
+
+    echo <<<HTML
                 </nav>
             </div>
         </header>

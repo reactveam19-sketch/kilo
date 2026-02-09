@@ -2,7 +2,10 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/admin_auth.php';
 require_once __DIR__ . '/../includes/template.php';
+
+require_admin();
 
 $db = get_db();
 $settings = get_settings($db);
@@ -60,14 +63,20 @@ $constants = $db->query('SELECT * FROM constants ORDER BY const_key ASC')->fetch
 
 render_header($settings, 'Constants Manager');
 ?>
-<section class="container">
+<section class="container admin-shell">
     <div class="admin-nav">
         <a href="/admin/index.php">Dashboard</a>
+        <a href="/admin/generate.php">Magic Generator</a>
+        <a href="/admin/bulk_generate.php">Bulk Generator</a>
+        <a href="/admin/api_keys.php">API Keys</a>
+        <a href="/admin/settings.php">Settings</a>
         <a href="/admin/users.php">Users</a>
         <a href="/admin/subscribers.php">Subscribers</a>
+        <a href="/admin/constants.php" class="is-active">Constants</a>
+        <a href="/admin/logout.php">Logout</a>
     </div>
 
-    <div class="form">
+    <div class="form admin-panel">
         <h1>Manage Constants</h1>
         <?php if ($notice): ?>
             <div class="notice"><?= htmlspecialchars($notice, ENT_QUOTES, 'UTF-8') ?></div>
@@ -83,11 +92,11 @@ render_header($settings, 'Constants Manager');
             <textarea id="description" name="description" rows="3"></textarea>
 
             <input type="hidden" name="action" value="add">
-            <button class="load-more" type="submit">Add Constant</button>
+            <button class="button button-primary" type="submit">Add Constant</button>
         </form>
     </div>
 
-    <div class="article">
+    <div class="article admin-panel">
         <h2>Stored Constants</h2>
         <ul>
             <?php foreach ($constants as $constant): ?>

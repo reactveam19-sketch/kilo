@@ -2,7 +2,10 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/admin_auth.php';
 require_once __DIR__ . '/../includes/template.php';
+
+require_admin();
 
 $db = get_db();
 $settings = get_settings($db);
@@ -55,14 +58,20 @@ $subscribers = $db->query('SELECT * FROM subscribers ORDER BY id DESC')->fetchAl
 
 render_header($settings, 'Subscriber Manager');
 ?>
-<section class="container">
+<section class="container admin-shell">
     <div class="admin-nav">
         <a href="/admin/index.php">Dashboard</a>
+        <a href="/admin/generate.php">Magic Generator</a>
+        <a href="/admin/bulk_generate.php">Bulk Generator</a>
+        <a href="/admin/api_keys.php">API Keys</a>
+        <a href="/admin/settings.php">Settings</a>
         <a href="/admin/users.php">Users</a>
+        <a href="/admin/subscribers.php" class="is-active">Subscribers</a>
         <a href="/admin/constants.php">Constants</a>
+        <a href="/admin/logout.php">Logout</a>
     </div>
 
-    <div class="form">
+    <div class="form admin-panel">
         <h1>Manage Subscribers</h1>
         <?php if ($notice): ?>
             <div class="notice"><?= htmlspecialchars($notice, ENT_QUOTES, 'UTF-8') ?></div>
@@ -78,11 +87,11 @@ render_header($settings, 'Subscriber Manager');
             </select>
 
             <input type="hidden" name="action" value="add">
-            <button class="load-more" type="submit">Add Subscriber</button>
+            <button class="button button-primary" type="submit">Add Subscriber</button>
         </form>
     </div>
 
-    <div class="article">
+    <div class="article admin-panel">
         <h2>Current Subscribers</h2>
         <ul>
             <?php foreach ($subscribers as $subscriber): ?>
