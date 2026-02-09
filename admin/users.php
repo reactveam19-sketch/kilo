@@ -2,7 +2,10 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/admin_auth.php';
 require_once __DIR__ . '/../includes/template.php';
+
+require_admin();
 
 $db = get_db();
 $settings = get_settings($db);
@@ -59,14 +62,20 @@ $users = $db->query('SELECT * FROM users ORDER BY id DESC')->fetchAll(PDO::FETCH
 
 render_header($settings, 'User Manager');
 ?>
-<section class="container">
+<section class="container admin-shell">
     <div class="admin-nav">
         <a href="/admin/index.php">Dashboard</a>
+        <a href="/admin/generate.php">Magic Generator</a>
+        <a href="/admin/bulk_generate.php">Bulk Generator</a>
+        <a href="/admin/api_keys.php">API Keys</a>
+        <a href="/admin/settings.php">Settings</a>
+        <a href="/admin/users.php" class="is-active">Users</a>
         <a href="/admin/subscribers.php">Subscribers</a>
         <a href="/admin/constants.php">Constants</a>
+        <a href="/admin/logout.php">Logout</a>
     </div>
 
-    <div class="form">
+    <div class="form admin-panel">
         <h1>Manage Users</h1>
         <?php if ($notice): ?>
             <div class="notice"><?= htmlspecialchars($notice, ENT_QUOTES, 'UTF-8') ?></div>
@@ -92,11 +101,11 @@ render_header($settings, 'User Manager');
             </select>
 
             <input type="hidden" name="action" value="add">
-            <button class="load-more" type="submit">Add User</button>
+            <button class="button button-primary" type="submit">Add User</button>
         </form>
     </div>
 
-    <div class="article">
+    <div class="article admin-panel">
         <h2>Existing Users</h2>
         <ul>
             <?php foreach ($users as $user): ?>

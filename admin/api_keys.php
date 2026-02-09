@@ -2,7 +2,10 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/admin_auth.php';
 require_once __DIR__ . '/../includes/template.php';
+
+require_admin();
 
 $db = get_db();
 $settings = get_settings($db);
@@ -50,16 +53,20 @@ $keys = $db->query('SELECT * FROM api_keys ORDER BY id DESC')->fetchAll(PDO::FET
 
 render_header($settings, 'API Keys');
 ?>
-<section class="container">
+<section class="container admin-shell">
     <div class="admin-nav">
         <a href="/admin/index.php">Dashboard</a>
+        <a href="/admin/generate.php">Magic Generator</a>
+        <a href="/admin/bulk_generate.php">Bulk Generator</a>
+        <a href="/admin/api_keys.php" class="is-active">API Keys</a>
         <a href="/admin/settings.php">Settings</a>
         <a href="/admin/users.php">Users</a>
         <a href="/admin/subscribers.php">Subscribers</a>
         <a href="/admin/constants.php">Constants</a>
+        <a href="/admin/logout.php">Logout</a>
     </div>
 
-    <div class="form">
+    <div class="form admin-panel">
         <h1>API Key Manager</h1>
         <?php if ($notice): ?>
             <div class="notice"><?= htmlspecialchars($notice, ENT_QUOTES, 'UTF-8') ?></div>
@@ -75,12 +82,12 @@ render_header($settings, 'API Keys');
             <label for="api_key">API Key</label>
             <input id="api_key" name="api_key" type="text" required>
 
-            <button class="load-more" type="submit">Add Key</button>
+            <button class="button button-primary" type="submit">Add Key</button>
             <input type="hidden" name="action" value="add">
         </form>
     </div>
 
-    <div class="article">
+    <div class="article admin-panel">
         <h2>Stored Keys</h2>
         <ul>
             <?php foreach ($keys as $key): ?>

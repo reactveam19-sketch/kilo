@@ -87,6 +87,17 @@ function ensure_schema(PDO $db): void
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;'
         );
         $db->exec(
+            'CREATE TABLE IF NOT EXISTS admin_users (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL UNIQUE,
+                password_hash VARCHAR(255) NOT NULL,
+                role VARCHAR(64) NOT NULL DEFAULT "admin",
+                status VARCHAR(32) NOT NULL DEFAULT "active",
+                created_at VARCHAR(64) NOT NULL
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;'
+        );
+        $db->exec(
             'CREATE TABLE IF NOT EXISTS subscribers (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 email VARCHAR(255) NOT NULL UNIQUE,
@@ -147,6 +158,18 @@ function ensure_schema(PDO $db): void
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL,
                 email TEXT NOT NULL UNIQUE,
+                role TEXT NOT NULL DEFAULT "admin",
+                status TEXT NOT NULL DEFAULT "active",
+                created_at TEXT NOT NULL
+            );'
+        );
+
+        $db->exec(
+            'CREATE TABLE IF NOT EXISTS admin_users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                email TEXT NOT NULL UNIQUE,
+                password_hash TEXT NOT NULL,
                 role TEXT NOT NULL DEFAULT "admin",
                 status TEXT NOT NULL DEFAULT "active",
                 created_at TEXT NOT NULL
