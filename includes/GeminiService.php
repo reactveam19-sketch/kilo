@@ -92,7 +92,7 @@ class GeminiService
             ],
             'generationConfig' => [
                 'temperature' => 0.7,
-                'maxOutputTokens' => 800,
+                'maxOutputTokens' => 1400,
             ],
         ]);
 
@@ -135,15 +135,69 @@ class GeminiService
         $description = $video['description'];
 
         return <<<PROMPT
-        You are an editor writing a short football news article based on a YouTube video.
+        You are an editor writing a long-form football news article based on a YouTube video.
         Return JSON with keys: title, meta_description, content_html.
         Title should be concise. Meta description should be under 160 characters.
-        content_html should include paragraphs and one bullet list.
+        content_html should include multiple sections with headings, paragraphs, and at least one bullet list.
 
         Video title: {$title}
         Channel: {$channel}
         Description: {$description}
+        Video tags: {$this->formatTags($video)}
+        Video statistics: {$this->formatStats($video)}
+        Related videos: {$this->formatRelatedVideos($video)}
         PROMPT;
+    }
+
+    private function formatTags(array $video): string
+    {
+        $tags = $video['tags'] ?? [];
+        if (!is_array($tags) || $tags === []) {
+            return 'None';
+        }
+
+        return implode(', ', array_slice($tags, 0, 10));
+    }
+
+    private function formatStats(array $video): string
+    {
+        $stats = $video['statistics'] ?? [];
+        if (!is_array($stats) || $stats === []) {
+            return 'Unavailable';
+        }
+
+        $parts = [];
+        if (isset($stats['views'])) {
+            $parts[] = 'Views: ' . number_format((int) $stats['views']);
+        }
+        if (isset($stats['likes'])) {
+            $parts[] = 'Likes: ' . number_format((int) $stats['likes']);
+        }
+        if (isset($stats['comments'])) {
+            $parts[] = 'Comments: ' . number_format((int) $stats['comments']);
+        }
+
+        return $parts === [] ? 'Unavailable' : implode(' | ', $parts);
+    }
+
+    private function formatRelatedVideos(array $video): string
+    {
+        $related = $video['related_videos'] ?? [];
+        if (!is_array($related) || $related === []) {
+            return 'None';
+        }
+
+        $lines = [];
+        foreach (array_slice($related, 0, 3) as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+            $title = (string) ($item['title'] ?? '');
+            $channel = (string) ($item['channel'] ?? '');
+            $lines[] = trim($title . ' (' . $channel . ')');
+        }
+
+        return $lines === [] ? 'None' : implode('; ', $lines);
     }
 
     private function parseModelResponse(string $text, array $video): ?array
