@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $author = trim($_POST['author'] ?? 'Editorial Desk');
     $provider = trim($_POST['provider'] ?? ($settings['default_ai_provider'] ?? 'gemini'));
 
-    $youtube = new YouTubeService();
+    $youtube = new YouTubeService($settings['youtube_api_key'] ?? null);
     $video = $youtube->fetchVideoDetails($url);
 
     if ($provider === 'openai') {
