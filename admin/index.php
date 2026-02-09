@@ -15,6 +15,9 @@ render_header($settings, 'Admin Dashboard');
         <a href="/admin/bulk_generate.php">Bulk Generator</a>
         <a href="/admin/api_keys.php">API Keys</a>
         <a href="/admin/settings.php">Settings</a>
+        <a href="/admin/users.php">Users</a>
+        <a href="/admin/subscribers.php">Subscribers</a>
+        <a href="/admin/constants.php">Constants</a>
     </div>
     <div class="article">
         <h1>Admin Dashboard</h1>

@@ -6,6 +6,7 @@ require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../includes/template.php';
 require_once __DIR__ . '/../includes/YouTubeService.php';
 require_once __DIR__ . '/../includes/GeminiService.php';
+require_once __DIR__ . '/../includes/OpenAIService.php';
 
 $db = get_db();
 $settings = get_settings($db);
@@ -14,12 +15,17 @@ $notice = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $url = trim($_POST['youtube_url'] ?? '');
     $author = trim($_POST['author'] ?? 'Editorial Desk');
+    $provider = trim($_POST['provider'] ?? ($settings['default_ai_provider'] ?? 'gemini'));
 
     $youtube = new YouTubeService();
     $video = $youtube->fetchVideoDetails($url);
 
-    $gemini = new GeminiService($db);
-    $articleData = $gemini->generateArticle($video);
+    if ($provider === 'openai') {
+        $ai = new OpenAIService($db);
+    } else {
+        $ai = new GeminiService($db);
+    }
+    $articleData = $ai->generateArticle($video);
 
     $slugBase = slugify($articleData['title']);
     $slug = $slugBase;
@@ -67,6 +73,12 @@ render_header($settings, 'Magic Generator');
 
             <label for="author">Author</label>
             <input id="author" name="author" type="text" value="Editorial Desk">
+
+            <label for="provider">AI Provider</label>
+            <select id="provider" name="provider">
+                <option value="gemini" <?= ($settings['default_ai_provider'] ?? 'gemini') === 'gemini' ? 'selected' : '' ?>>Gemini</option>
+                <option value="openai" <?= ($settings['default_ai_provider'] ?? 'gemini') === 'openai' ? 'selected' : '' ?>>ChatGPT</option>
+            </select>
 
             <button class="load-more" type="submit">Generate Article</button>
         </form>

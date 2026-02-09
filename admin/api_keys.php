@@ -9,15 +9,40 @@ $settings = get_settings($db);
 $notice = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $provider = trim($_POST['provider'] ?? 'gemini');
-    $apiKey = trim($_POST['api_key'] ?? '');
-    if ($apiKey !== '') {
-        $stmt = $db->prepare('INSERT INTO api_keys (provider, api_key) VALUES (:provider, :api_key)');
-        $stmt->execute([
-            ':provider' => $provider,
-            ':api_key' => $apiKey,
-        ]);
-        $notice = 'API key saved.';
+    $action = $_POST['action'] ?? 'add';
+    if ($action === 'add') {
+        $provider = trim($_POST['provider'] ?? 'gemini');
+        $apiKey = trim($_POST['api_key'] ?? '');
+        if ($apiKey !== '') {
+            $stmt = $db->prepare('INSERT INTO api_keys (provider, api_key) VALUES (:provider, :api_key)');
+            $stmt->execute([
+                ':provider' => $provider,
+                ':api_key' => $apiKey,
+            ]);
+            $notice = 'API key saved.';
+        }
+    }
+
+    if ($action === 'status') {
+        $id = (int) ($_POST['id'] ?? 0);
+        $status = trim($_POST['status'] ?? 'active');
+        if ($id > 0) {
+            $stmt = $db->prepare('UPDATE api_keys SET status = :status WHERE id = :id');
+            $stmt->execute([
+                ':status' => $status,
+                ':id' => $id,
+            ]);
+            $notice = 'Key status updated.';
+        }
+    }
+
+    if ($action === 'delete') {
+        $id = (int) ($_POST['id'] ?? 0);
+        if ($id > 0) {
+            $stmt = $db->prepare('DELETE FROM api_keys WHERE id = :id');
+            $stmt->execute([':id' => $id]);
+            $notice = 'API key removed.';
+        }
     }
 }
 
@@ -29,6 +54,9 @@ render_header($settings, 'API Keys');
     <div class="admin-nav">
         <a href="/admin/index.php">Dashboard</a>
         <a href="/admin/settings.php">Settings</a>
+        <a href="/admin/users.php">Users</a>
+        <a href="/admin/subscribers.php">Subscribers</a>
+        <a href="/admin/constants.php">Constants</a>
     </div>
 
     <div class="form">
@@ -40,6 +68,7 @@ render_header($settings, 'API Keys');
             <label for="provider">Provider</label>
             <select id="provider" name="provider">
                 <option value="gemini">Gemini</option>
+                <option value="openai">ChatGPT</option>
                 <option value="youtube">YouTube</option>
             </select>
 
@@ -47,6 +76,7 @@ render_header($settings, 'API Keys');
             <input id="api_key" name="api_key" type="text" required>
 
             <button class="load-more" type="submit">Add Key</button>
+            <input type="hidden" name="action" value="add">
         </form>
     </div>
 
@@ -54,7 +84,28 @@ render_header($settings, 'API Keys');
         <h2>Stored Keys</h2>
         <ul>
             <?php foreach ($keys as $key): ?>
-                <li><?= htmlspecialchars($key['provider'], ENT_QUOTES, 'UTF-8') ?> · Usage <?= (int) $key['usage_count'] ?> · Status <?= htmlspecialchars($key['status'], ENT_QUOTES, 'UTF-8') ?></li>
+                <li>
+                    <?= htmlspecialchars($key['provider'], ENT_QUOTES, 'UTF-8') ?>
+                    · Usage <?= (int) $key['usage_count'] ?>
+                    · Status <?= htmlspecialchars($key['status'], ENT_QUOTES, 'UTF-8') ?>
+                    <?php if (!empty($key['last_error_at'])): ?>
+                        · Last error <?= htmlspecialchars($key['last_error_at'], ENT_QUOTES, 'UTF-8') ?>
+                    <?php endif; ?>
+                    <form method="post" class="inline-form">
+                        <input type="hidden" name="action" value="status">
+                        <input type="hidden" name="id" value="<?= (int) $key['id'] ?>">
+                        <select name="status">
+                            <option value="active" <?= $key['status'] === 'active' ? 'selected' : '' ?>>active</option>
+                            <option value="paused" <?= $key['status'] === 'paused' ? 'selected' : '' ?>>paused</option>
+                        </select>
+                        <button type="submit">Update</button>
+                    </form>
+                    <form method="post" class="inline-form">
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="id" value="<?= (int) $key['id'] ?>">
+                        <button type="submit" onclick="return confirm('Remove this key?')">Delete</button>
+                    </form>
+                </li>
             <?php endforeach; ?>
         </ul>
     </div>
