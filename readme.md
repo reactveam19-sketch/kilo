@@ -7,7 +7,8 @@ A lightweight PHP 8.2+ football news platform that turns YouTube coverage into A
 - **Article page** with embedded YouTube video, JSON-LD schema, and related articles.
 - **Magic Generator** to turn a YouTube URL into a published article.
 - **Bulk Generator** for processing multiple video URLs at once.
-- **Admin settings** for site branding, ad placement, and API key storage.
+- **Admin settings** for site branding, ad placement, AI provider defaults, and API key storage.
+- **Admin panel** to manage users, subscribers, constants, and API keys.
 
 ## Quick Start
 ```bash
@@ -20,3 +21,14 @@ Then visit:
 
 ## Storage
 SQLite is used by default (`data/site.sqlite`). The database and tables are created automatically on first run.
+
+To switch to MySQL/MariaDB, set environment variables before starting PHP:
+
+```bash
+export DB_DRIVER=mysql
+export DB_HOST=127.0.0.1
+export DB_NAME=kilo
+export DB_USER=root
+export DB_PASSWORD=secret
+export DB_PORT=3306
+```

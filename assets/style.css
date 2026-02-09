@@ -195,3 +195,26 @@ body {
     border-radius: 8px;
     margin-bottom: 16px;
 }
+
+.inline-form {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 12px;
+}
+
+.inline-form button {
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.inline-form select {
+    padding: 6px 8px;
+    border-radius: 999px;
+    border: 1px solid #d4d4d4;
+}

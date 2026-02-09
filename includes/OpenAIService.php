@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-class GeminiService
+class OpenAIService
 {
     private PDO $db;
 
@@ -18,20 +18,18 @@ class GeminiService
         }
 
         $this->incrementUsage($key['id']);
-
-        $article = $this->requestGeminiArticle($key['api_key'], $video);
+        $article = $this->requestOpenAIArticle($key['api_key'], $video);
         if ($article !== null) {
             return $article;
         }
 
         $this->recordError($key['id']);
-
         return $this->fallbackArticle($video);
     }
 
     private function selectActiveKey(): ?array
     {
-        $stmt = $this->db->query('SELECT * FROM api_keys WHERE provider = "gemini" AND status = "active" ORDER BY usage_count ASC LIMIT 1');
+        $stmt = $this->db->query('SELECT * FROM api_keys WHERE provider = "openai" AND status = "active" ORDER BY usage_count ASC LIMIT 1');
         $key = $stmt->fetch(PDO::FETCH_ASSOC);
         return $key ?: null;
     }
@@ -51,66 +49,37 @@ class GeminiService
         ]);
     }
 
-    private function fallbackArticle(array $video): array
+    private function requestOpenAIArticle(string $apiKey, array $video): ?array
     {
-        return [
-            'title' => $video['title'] . ' - Football News',
-            'meta_description' => 'Breaking football update based on the latest video coverage of ' . $video['title'] . '.',
-            'content_html' => $this->buildHtml($video),
-        ];
-    }
-
-    private function buildHtml(array $video): string
-    {
-        $description = htmlspecialchars($video['description'], ENT_QUOTES, 'UTF-8');
-        $channel = htmlspecialchars($video['channel'], ENT_QUOTES, 'UTF-8');
-
-        return <<<HTML
-        <p><strong>Headline:</strong> {$video['title']} sparked fresh discussion across the football world. Our AI newsroom reviewed the footage and surfaced the key talking points.</p>
-        <h2>Key moments</h2>
-        <ul>
-            <li>Momentum swings highlighted by tactical adjustments and standout individual performances.</li>
-            <li>Coach reactions from {$channel} focused on the match plan execution.</li>
-            <li>Fans reacted instantly, amplifying the biggest moments from the broadcast.</li>
-        </ul>
-        <h2>What it means</h2>
-        <p>{$description}</p>
-        <p>The story continues to develop as the league calendar heats up.</p>
-        HTML;
-    }
-
-    private function requestGeminiArticle(string $apiKey, array $video): ?array
-    {
-        $prompt = $this->buildPrompt($video);
         $payload = json_encode([
-            'contents' => [
+            'model' => 'gpt-4o-mini',
+            'messages' => [
                 [
-                    'parts' => [
-                        ['text' => $prompt],
-                    ],
+                    'role' => 'system',
+                    'content' => 'You are a sports editor. Return JSON with keys: title, meta_description, content_html.',
+                ],
+                [
+                    'role' => 'user',
+                    'content' => $this->buildPrompt($video),
                 ],
             ],
-            'generationConfig' => [
-                'temperature' => 0.7,
-                'maxOutputTokens' => 800,
-            ],
+            'temperature' => 0.7,
         ]);
 
         if ($payload === false) {
             return null;
         }
 
-        $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' . urlencode($apiKey);
         $context = stream_context_create([
             'http' => [
                 'method' => 'POST',
-                'header' => "Content-Type: application/json\r\n",
+                'header' => "Content-Type: application/json\r\nAuthorization: Bearer {$apiKey}\r\n",
                 'content' => $payload,
                 'timeout' => 12,
             ],
         ]);
 
-        $response = @file_get_contents($url, false, $context);
+        $response = @file_get_contents('https://api.openai.com/v1/chat/completions', false, $context);
         if ($response === false) {
             return null;
         }
@@ -120,12 +89,12 @@ class GeminiService
             return null;
         }
 
-        $text = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';
+        $text = $data['choices'][0]['message']['content'] ?? '';
         if (!is_string($text) || trim($text) === '') {
             return null;
         }
 
-        return $this->parseModelResponse($text, $video);
+        return $this->parseModelResponse($text);
     }
 
     private function buildPrompt(array $video): string
@@ -135,10 +104,8 @@ class GeminiService
         $description = $video['description'];
 
         return <<<PROMPT
-        You are an editor writing a short football news article based on a YouTube video.
-        Return JSON with keys: title, meta_description, content_html.
-        Title should be concise. Meta description should be under 160 characters.
-        content_html should include paragraphs and one bullet list.
+        Write a short football news article based on the video below.
+        Return JSON with keys: title, meta_description (<= 160 chars), content_html (with a short list).
 
         Video title: {$title}
         Channel: {$channel}
@@ -146,7 +113,7 @@ class GeminiService
         PROMPT;
     }
 
-    private function parseModelResponse(string $text, array $video): ?array
+    private function parseModelResponse(string $text): ?array
     {
         $jsonStart = strpos($text, '{');
         if ($jsonStart === false) {
@@ -167,5 +134,30 @@ class GeminiService
             'meta_description' => (string) $article['meta_description'],
             'content_html' => (string) $article['content_html'],
         ];
+    }
+
+    private function fallbackArticle(array $video): array
+    {
+        return [
+            'title' => $video['title'] . ' - Football News',
+            'meta_description' => 'AI-generated football update based on ' . $video['title'] . '.',
+            'content_html' => $this->buildFallbackHtml($video),
+        ];
+    }
+
+    private function buildFallbackHtml(array $video): string
+    {
+        $description = htmlspecialchars($video['description'], ENT_QUOTES, 'UTF-8');
+        $channel = htmlspecialchars($video['channel'], ENT_QUOTES, 'UTF-8');
+
+        return <<<HTML
+        <p>Our editors reviewed {$channel}'s latest upload and captured the biggest talking points for fans.</p>
+        <ul>
+            <li>Key momentum shifts and standout performances.</li>
+            <li>Managerial reactions and tactical takeaways.</li>
+            <li>What this result means for the table.</li>
+        </ul>
+        <p>{$description}</p>
+        HTML;
     }
 }

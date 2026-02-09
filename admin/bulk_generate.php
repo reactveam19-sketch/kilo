@@ -6,6 +6,7 @@ require_once __DIR__ . '/../includes/functions.php';
 require_once __DIR__ . '/../includes/template.php';
 require_once __DIR__ . '/../includes/YouTubeService.php';
 require_once __DIR__ . '/../includes/GeminiService.php';
+require_once __DIR__ . '/../includes/OpenAIService.php';
 
 $db = get_db();
 $settings = get_settings($db);
@@ -14,13 +15,18 @@ $notice = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $urls = array_filter(array_map('trim', explode("\n", $_POST['youtube_urls'] ?? '')));
     $author = trim($_POST['author'] ?? 'Editorial Desk');
+    $provider = trim($_POST['provider'] ?? ($settings['default_ai_provider'] ?? 'gemini'));
     $youtube = new YouTubeService();
-    $gemini = new GeminiService($db);
+    if ($provider === 'openai') {
+        $ai = new OpenAIService($db);
+    } else {
+        $ai = new GeminiService($db);
+    }
 
     $created = 0;
     foreach ($urls as $url) {
         $video = $youtube->fetchVideoDetails($url);
-        $articleData = $gemini->generateArticle($video);
+        $articleData = $ai->generateArticle($video);
         $slugBase = slugify($articleData['title']);
         $slug = $slugBase;
         $suffix = 1;
@@ -69,6 +75,12 @@ render_header($settings, 'Bulk Generator');
 
             <label for="author">Author</label>
             <input id="author" name="author" type="text" value="Editorial Desk">
+
+            <label for="provider">AI Provider</label>
+            <select id="provider" name="provider">
+                <option value="gemini" <?= ($settings['default_ai_provider'] ?? 'gemini') === 'gemini' ? 'selected' : '' ?>>Gemini</option>
+                <option value="openai" <?= ($settings['default_ai_provider'] ?? 'gemini') === 'openai' ? 'selected' : '' ?>>ChatGPT</option>
+            </select>
 
             <button class="load-more" type="submit">Process Batch</button>
         </form>

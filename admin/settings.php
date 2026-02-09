@@ -15,6 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'body_ad' => trim($_POST['body_ad'] ?? ''),
         'footer_ad' => trim($_POST['footer_ad'] ?? ''),
         'youtube_api_key' => trim($_POST['youtube_api_key'] ?? ''),
+        'default_ai_provider' => trim($_POST['default_ai_provider'] ?? 'gemini'),
     ]);
     $notice = 'Settings updated.';
 }
@@ -27,6 +28,9 @@ render_header($settings, 'Settings');
     <div class="admin-nav">
         <a href="/admin/index.php">Dashboard</a>
         <a href="/admin/api_keys.php">API Keys</a>
+        <a href="/admin/users.php">Users</a>
+        <a href="/admin/subscribers.php">Subscribers</a>
+        <a href="/admin/constants.php">Constants</a>
     </div>
 
     <div class="form">
@@ -52,6 +56,12 @@ render_header($settings, 'Settings');
 
             <label for="youtube_api_key">YouTube API Key</label>
             <input id="youtube_api_key" name="youtube_api_key" type="text" value="<?= htmlspecialchars($settings['youtube_api_key'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+
+            <label for="default_ai_provider">Default AI Provider</label>
+            <select id="default_ai_provider" name="default_ai_provider">
+                <option value="gemini" <?= ($settings['default_ai_provider'] ?? 'gemini') === 'gemini' ? 'selected' : '' ?>>Gemini</option>
+                <option value="openai" <?= ($settings['default_ai_provider'] ?? 'gemini') === 'openai' ? 'selected' : '' ?>>ChatGPT</option>
+            </select>
 
             <button class="load-more" type="submit">Save Settings</button>
         </form>
