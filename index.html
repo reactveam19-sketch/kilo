@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BrightForge Web Agency</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #111827;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #22d3ee;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(160deg, var(--bg), #1e293b);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 56px 24px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 1.1rem;
+      line-height: 1.6;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .services {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 36px 0;
+    }
+
+    .card {
+      background: rgba(17, 24, 39, 0.75);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      color: var(--accent);
+    }
+
+    .cta {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .button {
+      display: inline-block;
+      text-decoration: none;
+      background: var(--accent);
+      color: #0b1120;
+      font-weight: bold;
+      padding: 12px 20px;
+      border-radius: 8px;
+    }
+
+    footer {
+      margin-top: 60px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>BrightForge Web Agency</h1>
+      <p class="subtitle">
+        We design and build modern websites that help brands grow online. Fast, responsive,
+        and crafted to turn visitors into customers.
+      </p>
+    </header>
+
+    <section class="services">
+      <article class="card">
+        <h3>Web Design</h3>
+        <p>Clean, conversion-focused design tailored to your brand and audience.</p>
+      </article>
+      <article class="card">
+        <h3>Development</h3>
+        <p>Reliable, SEO-friendly websites built with performance and scalability in mind.</p>
+      </article>
+      <article class="card">
+        <h3>Maintenance</h3>
+        <p>Ongoing updates, security checks, and support so your site stays at its best.</p>
+      </article>
+    </section>
+
+    <div class="cta">
+      <a class="button" href="mailto:hello@brightforge.agency">Start Your Project</a>
+    </div>
+
+    <footer>
+      © 2026 BrightForge Web Agency — hello@brightforge.agency
+    </footer>
+  </main>
+</body>
+</html>
